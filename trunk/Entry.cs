@@ -24,5 +24,7 @@ namespace Program_Finder
         public Icon SmallIcon { get; set; }
         public bool IsUpdate { get; set; }
         public string Help { get; set; }
+        public string RegistryUser { get; set; }
+        
     }
 }
