@@ -295,7 +295,6 @@ namespace Program_Finder
             }
             finally
             {
-                txtSearch.Text = "";
                 m_reload = true;
             }
         }
