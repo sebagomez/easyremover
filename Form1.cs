@@ -17,12 +17,13 @@ namespace Program_Finder
 {
     public partial class Form1 : Form
     {
-        RegistryKey m_location;
+        //RegistryKey m_location;
         string[] m_list;
         int m_count = 0;
         Entry m_entry;
         bool m_reload = false;
         Dictionary<string, Entry> m_entries;
+        Dictionary<string, RegistryKey> m_locations;
 
         public Form1()
         {
@@ -47,38 +48,62 @@ namespace Program_Finder
             Cursor.Current = Cursors.WaitCursor;
             try
             {
+                m_count = 0;
+                m_entries = new Dictionary<string, Entry>();
+
                 RegistryKey reg = Registry.LocalMachine;
                 string subkey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
 
-                m_location = reg.OpenSubKey(subkey);
-                m_list = m_location.GetSubKeyNames();
-
-                m_count = 0;
-                m_entries = new Dictionary<string, Entry>();
-                foreach (string prog in m_list)
-                {
-                    RegistryKey local = m_location.OpenSubKey(prog);
-
-                    if (local.GetValue("SystemComponent") != null)
-                        continue;
-
-                    if (local.GetValue("IsMinorUpgrade") != null)
-                        continue;
-
-                    if (local.GetValue("DisplayName") == null || string.IsNullOrEmpty(local.GetValue("DisplayName").ToString()))
-                        continue;
-
-                    Entry entry = LoadEntry(prog);
-                    m_entries.Add(prog, entry);
-                    listView1.SmallImageList.Images.Add(entry.Name, entry.SmallIcon);
-                    listView1.LargeImageList.Images.Add(entry.Name, entry.LargeIcon);
-                }
+                LoadFromKey(reg.OpenSubKey(subkey), "");
+                LoadUserSpecific();
 
                 m_reload = false;
             }
             finally
             {
                 Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void LoadUserSpecific()
+        {
+            RegistryKey reg = Registry.Users;
+            string[] users = reg.GetSubKeyNames();
+
+            foreach (string user in users)
+            {
+                string subkey = user + "\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+                RegistryKey userKey = reg.OpenSubKey(subkey, true);
+
+                if (userKey == null)
+                    continue;
+
+                LoadFromKey(userKey,user);
+            }
+        }
+
+        private void LoadFromKey(RegistryKey key, string user)
+        {
+            m_list = key.GetSubKeyNames();
+
+            foreach (string prog in m_list)
+            {
+                RegistryKey local = key.OpenSubKey(prog);
+
+                if (local.GetValue("SystemComponent") != null)
+                    continue;
+
+                if (local.GetValue("IsMinorUpgrade") != null)
+                    continue;
+
+                if (local.GetValue("DisplayName") == null || string.IsNullOrEmpty(local.GetValue("DisplayName").ToString()))
+                    continue;
+
+                Entry entry = LoadEntry(key,prog);
+                entry.RegistryUser = user;
+                m_entries.Add(prog, entry);
+                listView1.SmallImageList.Images.Add(entry.Name, entry.SmallIcon);
+                listView1.LargeImageList.Images.Add(entry.Name, entry.LargeIcon);
             }
         }
 
@@ -163,9 +188,9 @@ namespace Program_Finder
             ShowEntry(m_entries[e.Item.Tag.ToString()]);
         }
 
-        private Entry LoadEntry(string entryKey)
+        private Entry LoadEntry(RegistryKey key, string entryKey)
         {
-            RegistryKey local = m_location.OpenSubKey(entryKey);
+            RegistryKey local = key.OpenSubKey(entryKey);
             Entry entry = new Entry(entryKey);
 
             if (local.GetValue("DisplayName") != null)
@@ -234,11 +259,8 @@ namespace Program_Finder
                 lnkHelp.Visible = true;
                 lnkHelp.Click += new EventHandler(lnkHelp_Click);
             }
-            else
+            else 
                 lnkHelp.Visible = false;
-            {
-
-            }
 
             btnUninstall.Enabled = true;
             m_entry = entry;
@@ -273,6 +295,7 @@ namespace Program_Finder
             }
             finally
             {
+                txtSearch.Text = "";
                 m_reload = true;
             }
         }
