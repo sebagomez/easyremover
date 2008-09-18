@@ -302,7 +302,7 @@ namespace Program_Finder
         private ProcessStartInfo GetProcessInfo(string uninstallString)
         {
             ProcessStartInfo info = new ProcessStartInfo();
-            uninstallString = uninstallString.Replace("\"", "");
+            uninstallString = uninstallString.Replace("\"", "").ToLower();
 
             if (uninstallString.EndsWith(".exe"))
                 info.FileName = uninstallString;
