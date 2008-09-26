@@ -40,7 +40,23 @@ namespace Program_Finder
             listView1.LargeImageList.TransparentColor = Color.White;
             listView1.LargeImageList.ColorDepth = ColorDepth.Depth32Bit;
 
+            BackgroundWorker bw = new BackgroundWorker();
+            bw.DoWork += new DoWorkEventHandler(BackgroundLoad);
+            bw.RunWorkerAsync();
+        }
+
+        private void BackgroundLoad(object sender, DoWorkEventArgs args)
+        {
             LoadFromRegistry();
+            LoadPrograms("");
+        }
+
+        private void HideWait()
+        {
+            if (lblWait.InvokeRequired)
+                lblWait.Invoke(new MethodInvoker(HideWait));
+            else
+                lblWait.Hide();
         }
 
         private void LoadFromRegistry()
@@ -102,14 +118,24 @@ namespace Program_Finder
                 Entry entry = LoadEntry(key,prog);
                 entry.RegistryUser = user;
                 m_entries.Add(prog, entry);
-                listView1.SmallImageList.Images.Add(entry.Name, entry.SmallIcon);
-                listView1.LargeImageList.Images.Add(entry.Name, entry.LargeIcon);
+
+                SetImages(entry.Name, entry.SmallIcon, entry.LargeIcon);
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        delegate void SetImageCallback(string entryName, Icon small, Icon large);
+
+        private void SetImages(string entryName, Icon small, Icon large)
         {
-            LoadPrograms("");
+            if (listView1.InvokeRequired)
+            {
+                listView1.Invoke(new SetImageCallback(SetImages), new object[] { entryName, small, large });
+            }
+            else
+            {
+                listView1.SmallImageList.Images.Add(entryName, small);
+                listView1.LargeImageList.Images.Add(entryName, large);
+            }
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
@@ -175,12 +201,27 @@ namespace Program_Finder
                 item.ImageKey = entry.Name;
                 item.SubItems.Add(entry.Publisher);
 
-                listView1.Items.Add(item);
-
+                AddProgram(item);
 
                 m_count++;
             }
+            SetStatus();
+        }
+
+        private void SetStatus()
+        {
             status.Text = string.Format("Programs found: {0}", m_count);
+        }
+
+        delegate void SetProgramCallback(ListViewItem item);
+        private void AddProgram(ListViewItem item)
+        {
+            if (listView1.InvokeRequired)
+                listView1.Invoke(new SetProgramCallback(AddProgram), new object[] { item });
+            else
+                listView1.Items.Add(item);
+
+            HideWait();
         }
 
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
