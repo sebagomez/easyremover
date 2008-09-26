@@ -58,6 +58,7 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.name = new System.Windows.Forms.ColumnHeader();
             this.publisher = new System.Windows.Forms.ColumnHeader();
+            this.lblWait = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -257,10 +258,17 @@
             // 
             resources.ApplyResources(this.publisher, "publisher");
             // 
+            // lblWait
+            // 
+            resources.ApplyResources(this.lblWait, "lblWait");
+            this.lblWait.BackColor = System.Drawing.SystemColors.Window;
+            this.lblWait.Name = "lblWait";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lblWait);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -269,7 +277,6 @@
             this.Controls.Add(this.chkUpdates);
             this.Controls.Add(this.txtSearch);
             this.Name = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -313,6 +320,7 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ColumnHeader publisher;
+        private System.Windows.Forms.Label lblWait;
     }
 }
 
