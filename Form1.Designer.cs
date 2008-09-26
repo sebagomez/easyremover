@@ -59,6 +59,7 @@
             this.name = new System.Windows.Forms.ColumnHeader();
             this.publisher = new System.Windows.Forms.ColumnHeader();
             this.lblWait = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -166,6 +167,7 @@
             // btnClose
             // 
             resources.ApplyResources(this.btnClose, "btnClose");
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Name = "btnClose";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -264,10 +266,17 @@
             this.lblWait.BackColor = System.Drawing.SystemColors.Window;
             this.lblWait.Name = "lblWait";
             // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnClose;
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.lblWait);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.statusStrip1);
@@ -321,6 +330,7 @@
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ColumnHeader publisher;
         private System.Windows.Forms.Label lblWait;
+        private System.Windows.Forms.Label label4;
     }
 }
 
