@@ -245,6 +245,7 @@
             this.publisher});
             this.listView1.ContextMenuStrip = this.contextMenuStrip1;
             this.listView1.FullRowSelect = true;
+            this.listView1.HideSelection = false;
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Sorting = System.Windows.Forms.SortOrder.Ascending;
