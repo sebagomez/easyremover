@@ -325,7 +325,6 @@ namespace Program_Finder
                 MessageHandler.ShowWarning("No program selected.");
                 return;
             }
-
             try
             {
                 Process.Start(GetProcessInfo(m_entry.Unisntall));
@@ -343,18 +342,10 @@ namespace Program_Finder
         private ProcessStartInfo GetProcessInfo(string uninstallString)
         {
             ProcessStartInfo info = new ProcessStartInfo();
-            uninstallString = uninstallString.Replace("\"", "").ToLower();
-
-            if (uninstallString.EndsWith(".exe"))
-                info.FileName = uninstallString;
-            else
-            {
-                string command = uninstallString.Substring(0, uninstallString.IndexOf(".exe") + 4);
-                string argument = uninstallString.Substring(uninstallString.IndexOf(".exe") + 5);
-
-                info.FileName = command;
-                info.Arguments = argument;
-            }
+            info.FileName = "cmd.exe";
+            info.Arguments = "/C " + uninstallString;
+            info.WindowStyle = ProcessWindowStyle.Hidden;
+            info.CreateNoWindow = true;
             return info;
         }
 
