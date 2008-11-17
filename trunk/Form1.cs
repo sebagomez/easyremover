@@ -23,7 +23,6 @@ namespace Program_Finder
         Entry m_entry;
         bool m_reload = false;
         Dictionary<string, Entry> m_entries;
-        Dictionary<string, RegistryKey> m_locations;
 
         public Form1()
         {
@@ -341,9 +340,38 @@ namespace Program_Finder
 
         private ProcessStartInfo GetProcessInfo(string uninstallString)
         {
+            uninstallString = uninstallString.Replace("\"", "");
+
+            //string dir = Path.GetDirectoryName(uninstallString);
+            //string path = Path.GetFullPath(uninstallString);
+            //string fil = Path.GetFileName(uninstallString);
+
+            string[] tokens = uninstallString.Split(' ');
+            string path = tokens[0];
+            string arguments = "";
+            int i = 0;
+
+            if (string.IsNullOrEmpty(Path.GetExtension(path)))
+            {
+                while (!File.Exists(path))
+                {
+                    i++;
+                    path += " " + tokens[i];
+                }
+                path = "\"" + path + "\"";
+            }
+            
+            i++;
+            while (i < tokens.Length)
+            {
+                arguments += " " + tokens[i];
+                i++;
+            }
+            
+
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = "cmd.exe";
-            info.Arguments = "/C " + uninstallString;
+            info.Arguments = "/C " + path + arguments;
             info.WindowStyle = ProcessWindowStyle.Hidden;
             info.CreateNoWindow = true;
             return info;
