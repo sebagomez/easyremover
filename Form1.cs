@@ -342,10 +342,6 @@ namespace Program_Finder
         {
             uninstallString = uninstallString.Replace("\"", "");
 
-            //string dir = Path.GetDirectoryName(uninstallString);
-            //string path = Path.GetFullPath(uninstallString);
-            //string fil = Path.GetFileName(uninstallString);
-
             string[] tokens = uninstallString.Split(' ');
             string path = tokens[0];
             string arguments = "";
@@ -362,16 +358,35 @@ namespace Program_Finder
             }
             
             i++;
+            string fileArg = "";
+            bool fileFound = false;
+
             while (i < tokens.Length)
             {
-                arguments += " " + tokens[i];
+                if (fileFound)
+                {
+                    arguments += fileArg;
+                    fileArg = " "+ tokens[i];
+                    fileFound = false;
+                }
+                else
+                    fileArg += tokens[i] + " ";
+
+                if (File.Exists(fileArg))
+                {
+                    fileArg = "\"" + fileArg + "\"";
+                    fileFound = true;
+                }
+
+                
                 i++;
             }
-            
+
+            arguments += fileArg;
 
             ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = "cmd.exe";
-            info.Arguments = "/C " + path + arguments;
+            info.FileName = path;
+            info.Arguments = arguments;
             info.WindowStyle = ProcessWindowStyle.Hidden;
             info.CreateNoWindow = true;
             return info;
