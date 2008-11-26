@@ -370,13 +370,15 @@ namespace Program_Finder
                     fileFound = false;
                 }
                 else
-                    fileArg += tokens[i] + " ";
+                    fileArg += tokens[i];
 
-                if (File.Exists(fileArg))
+                if (File.Exists(fileArg) && fileArg.Contains(" "))
                 {
                     fileArg = "\"" + fileArg + "\"";
                     fileFound = true;
                 }
+                else
+                    fileArg += " ";
 
                 
                 i++;
@@ -387,7 +389,6 @@ namespace Program_Finder
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = path;
             info.Arguments = arguments;
-            info.WindowStyle = ProcessWindowStyle.Hidden;
             info.CreateNoWindow = true;
             return info;
         }
